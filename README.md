@@ -1,4 +1,4 @@
-# Treat Quest - Reinforcement Learning Game
+# Treat Quest - Reinforcement Learning Game Simulation
 
 Programmer: Noiva Chiu
 
@@ -23,6 +23,7 @@ After the agent completes its training phase, the mouse agent is able to take th
 
 1. Open a terminal and navigate to the directory containing the program's files
 2. Enter this command to execute the project: python main.py
+
 
 
 

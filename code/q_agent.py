@@ -54,7 +54,7 @@ class QLearningAgent:
         """
 
         # exploration: take random action
-        if random.uniform(0, 1) < self.epsilon:
+        if self.rng.uniform(0, 1) < self.epsilon:
             return self.rng.choice(ACTIONS)
 
         # exploit: choose action with max Q(s,a)
@@ -80,7 +80,7 @@ class QLearningAgent:
         # if multiple actions tie, choose among the best randomly
         best_actions = [a for (q, a) in q_values if q == max_q]
 
-        best_action = random.choice(best_actions)
+        best_action = self.rng.choice(best_actions)
 
         return best_action
 

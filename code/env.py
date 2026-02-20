@@ -5,10 +5,10 @@ WALL  = '⬛'
 EMPTY = '🟥'
 AGENT = '🐭'               # jerry
 TREAT = '🧀'               # cheese
-MOVING_TRAP = '😾'         # tom
 MOUSE_TRAP = '🪤 '         # mouse trap
-POISON_TRAP = '🍇'         # mouse poison
-DEATH_TRAP = '☠️'          # mouse death
+MOVING_TRAP = '😾'         # tom (unused)
+POISON_TRAP = '🍇'         # mouse poison (unused)
+DEATH_TRAP = '☠️'          # mouse death (unused)
 HOME = '🏠'                # mouse home
 
 # Actions agent can choose to take
@@ -40,7 +40,7 @@ class GridWorld():
         self.treat_list = ["treat" + str(i) for i in range(self.num_treats)]
         self.treat_dict_status = dict.fromkeys(self.treat_list, 0)             
                                                             
-        self.treat_rand_pos = [(5, 5), (5, 3), (1, 4), (2, 2), (4, 5)]      # list of possible random positions of treats
+        self.treat_rand_pos = [(5, 5), (5, 3), (1, 4), (2, 2), (4, 5)]      # list of possible random positions of treats (hard-coded)
         self.treat_dict_pos = dict.fromkeys(self.treat_list, (-1, -1))      # dict mapping position of treats to treat (initially off grid)
 
 
@@ -74,10 +74,10 @@ class GridWorld():
         self.treat_dict_status.update(dict.fromkeys(self.treat_dict_status, 0))
 
         # Randomly chooses number of treats to place for episode (between 0 and 5 inclusive)
-        self.ep_num_treats = random.randint(0, self.num_treats)
+        self.ep_num_treats = self.rng.randint(0, self.num_treats)
 
         # Shuffles the array of possible treat positions to randomize which will be used (not sure best method of randomizing)
-        random.shuffle(self.treat_rand_pos)         
+        self.rng.shuffle(self.treat_rand_pos)         
 
         for i in range(self.ep_num_treats):
 
@@ -87,6 +87,7 @@ class GridWorld():
         # Gets initial state of environment
         state = self.get_current_state()
 
+        # TESTING
         # print(f"Game state tuple: {state}")
     
         return state
@@ -139,6 +140,7 @@ class GridWorld():
 
         next_state = self.get_current_state()
 
+        # TESTING
         # print(f"Game state tuple: {next_state}")
 
         return next_state, reward, done

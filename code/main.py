@@ -4,31 +4,13 @@ import time
 from env import GridWorld
 from q_agent import QLearningAgent
 
+# clears the console screen each time its called 
 def clear():
-    # clears the console screen each time its called 
     # this makes the console cleaner
     os.system('cls' if os.name == 'nt' else 'clear')
 
-def main():
-
-    size = 5        # inner grid
-    w = size + 2    # add walls
-    
-    # makes the grid, the seed value here makes random repeatable GAME 
-    env = GridWorld(rows=w, cols=w, size=size, seed=42)
-    
-    # creates agent, the seed value here make random repeatable ACTIONS
-    agent = QLearningAgent(0.85, 0.95, 1, seed=1)
-
-    num_ep_train = 15000   # number of episodes to run training loop
-    num_ep_render = 10     # number of episodes to render results of traning
-    max_steps = 100              # max step count
-    
-    delay_s = 0.3          # delay for each step sp we can see it move
-
-    episode_return = 0 # total points this round/episode
-
-    # training loop (epsilon-greedy policy - exploratation with exploration)
+# training loop (epsilon-greedy policy - exploratation with exploration)
+def training_loop(env, agent, max_steps, num_ep_train,  episode_return):
     for episode in range(num_ep_train):
 
         done = False
@@ -54,7 +36,6 @@ def main():
             # clear()
             # print('\nEpisode', (episode + 1))
             # print(f"\nStep {step+1}/{max_steps}")
-            # env.render()
 
             # choose action 
             action = agent.act(state)
@@ -93,7 +74,9 @@ def main():
 
     print("\nTraining Loop Over:")
 
-    # rendering loop (pure greedy run - only exploitation)
+# rendering loop (pure greedy run - only exploitation)
+def rendering_loop(env, agent, max_steps, num_ep_render,  episode_return, delay_s):
+
     for episode in range(num_ep_render):
 
         done = False
@@ -144,9 +127,34 @@ def main():
             time.sleep(delay_s)
 
     # final frame
-    # clear()
+    clear()
     print("\nFinal State:")
     env.render()
+
+def main():
+
+    size = 5        # inner grid
+    w = size + 2    # add walls
+    
+    # makes the grid, the seed value here makes random repeatable GAME 
+    env = GridWorld(rows=w, cols=w, size=size, seed=42)
+    
+    # creates agent, the seed value here make random repeatable ACTIONS
+    agent = QLearningAgent(0.85, 0.95, 1, seed=1)
+
+    num_ep_train = 15000   # number of episodes to run training loop
+    num_ep_render = 10     # number of episodes to render results of traning
+    max_steps = 100        # max step count
+    
+    delay_s = 0.3          # delay for each step sp we can see it move
+
+    episode_return = 0     # total points this round/episode
+
+    # training loop (epsilon-greedy policy - exploratation with exploration)
+    training_loop(env, agent, max_steps, num_ep_train,  episode_return)
+
+    # rendering loop (pure greedy run - only exploitation)
+    rendering_loop(env, agent, max_steps, num_ep_render,  episode_return, delay_s)
 
 if __name__ == "__main__":
     main()

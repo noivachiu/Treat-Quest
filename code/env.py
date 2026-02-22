@@ -50,7 +50,7 @@ class GridWorld():
         for r in range(rows):
             row = []
             for c in range(cols):
-                if r == 0 or r == rows - 1 or c == 0 or c == cols - 1:
+                if (r == 0) or (r == rows - 1) or (c == 0) or (c == cols - 1):
                     row.append(WALL)
                 else:
                     row.append(EMPTY)
@@ -80,15 +80,11 @@ class GridWorld():
         self.rng.shuffle(self.treat_rand_pos)         
 
         for i in range(self.ep_num_treats):
-
             self.treat_dict_pos["treat" + str(i)] = self.treat_rand_pos[i]          # Sets position of treats that will appear on epsiode
             self.treat_dict_status["treat" + str(i)] = 1                            # Sets status of treats to appear on episode to 1
         
         # Gets initial state of environment
         state = self.get_current_state()
-
-        # TESTING
-        # print(f"Game state tuple: {state}")
     
         return state
 
@@ -99,11 +95,11 @@ class GridWorld():
         r, c = self.agent_pos
         nr, nc = r + dr, c + dc
 
-        # check boundary / wall
+        # Check boundary / wall
         if self.grid[nr][nc] != WALL:
             self.agent_pos = (nr, nc)       # updates agent's position
 
-        # get cheese?
+        # Get cheese?
         eat_cheese = False
 
         for treat in self.treat_list:
@@ -117,13 +113,13 @@ class GridWorld():
                     self.treat_dict_status[treat] = 0           # change status to eaten
                     self.treat_dict_pos[treat] = (-1, -1)       # change position to off grid
 
-        # reach home?
+        # Reach home?
         done = (self.agent_pos == self.home_pos)
 
-        # hit trap?
+        # Hit trap?
         hit_trap = (self.agent_pos == self.trap_pos)
 
-        #reward
+        # Reward
         # +100 if cheese found
         # 0 if reached home
         # -1 each step

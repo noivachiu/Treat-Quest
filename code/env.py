@@ -37,8 +37,7 @@ class GridWorld():
         self.agent_pos = None  # (r, c)
 
         self.num_treats = 5
-        self.treat_list = ["treat" + str(i) for i in range(self.num_treats)]
-        # self.treat_list = [i for i in range(self.num_treats)]
+        self.treat_list = [i for i in range(self.num_treats)]
         self.treat_dict_status = dict.fromkeys(self.treat_list, 0)             
                                                             
         self.treat_rand_pos = [(5, 5), (5, 3), (1, 4), (2, 2), (4, 5)]      # list of possible random positions of treats (hard-coded)
@@ -71,8 +70,11 @@ class GridWorld():
         self.trap_pos = (3, 3)
 
         # Resets dictionaries
-        self.treat_dict_pos.update(dict.fromkeys(self.treat_dict_pos, (-1, -1)))
-        self.treat_dict_status.update(dict.fromkeys(self.treat_dict_status, 0))
+        for key in self.treat_dict_pos:
+            self.treat_dict_pos[key] = (-1, -1)
+
+        for key in self.treat_dict_status:
+            self.treat_dict_status[key] = 0
 
         # Randomly chooses number of treats to place for episode (between 0 and 5 inclusive)
         self.ep_num_treats = self.rng.randint(0, self.num_treats)
@@ -81,8 +83,8 @@ class GridWorld():
         self.rng.shuffle(self.treat_rand_pos)         
 
         for i in range(self.ep_num_treats):
-            self.treat_dict_pos["treat" + str(i)] = self.treat_rand_pos[i]          # Sets position of treats that will appear on epsiode
-            self.treat_dict_status["treat" + str(i)] = 1                            # Sets status of treats to appear on episode to 1
+            self.treat_dict_pos[i] = self.treat_rand_pos[i]          # Sets position of treats that will appear on epsiode
+            self.treat_dict_status[i] = 1                            # Sets status of treats to appear on episode to 1
         
         # Gets initial state of environment
         state = self.get_current_state()
@@ -101,18 +103,17 @@ class GridWorld():
             self.agent_pos = (nr, nc)       # updates agent's position
 
         # Get cheese?
-        eat_cheese = False
+        eat_any_cheese = False
 
         for treat in self.treat_list:
 
             if (self.treat_dict_status[treat] == 1):
+                ate_cheese = self.agent_pos == self.treat_dict_pos[treat]
+                eat_any_cheese = eat_any_cheese or ate_cheese
 
-                eat_cheese = eat_cheese or (self.agent_pos == self.treat_dict_pos[treat])
-
-                if self.agent_pos == self.treat_dict_pos[treat]:
-
-                    self.treat_dict_status[treat] = 0           # change status to eaten
-                    self.treat_dict_pos[treat] = (-1, -1)       # change position to off grid
+                if ate_cheese:
+                    self.treat_dict_status[treat] = 0               # change status to eaten
+                    self.treat_dict_pos[treat] = (-1, -1)           # change position to off grid
 
         # Reach home?
         done = (self.agent_pos == self.home_pos)
@@ -126,7 +127,7 @@ class GridWorld():
         # -1 each step
         # -25 for hitting trap
 
-        if eat_cheese:
+        if eat_any_cheese:
             reward = 100
         elif done:
             reward = 0
@@ -166,11 +167,8 @@ class GridWorld():
                 elif (self.ep_num_treats > 0) and ((r, c) in self.treat_dict_pos.values()):
 
                     place_treat = False
-
                     for treat in self.treat_list:
-
                         if (self.treat_dict_status[treat] == 1) and ((r, c) == self.treat_dict_pos[treat]):
-
                             place_treat = True
                             line.append(TREAT)
 
@@ -185,11 +183,12 @@ class GridWorld():
 
     def get_current_state(self):
 
-        treats_status = [self.treat_dict_status[key] for key in self.treat_dict_status]
-        treats_status = tuple(treats_status)                                                # convert list to tuple
+        treats_pos_set = set()
 
-        treats_pos = [self.treat_dict_pos[key] for key in self.treat_dict_pos]
-        treats_pos = tuple(treats_pos)                                                      # convert list to tuple
+        for key in self.treat_dict_status:
+            if self.treat_dict_status[key] == 1:
+                treats_pos_set.add(self.treat_dict_pos[key])
 
-        # (mouse_pos (r,c), house_pos(r,c), cheese_states (_,_,_,_,_), cheeses_pos ((r0, c0), (r1, c1), (r2, c2), (r3, c3), (r4, c4)), trap_pos)
-        return self.agent_pos, self.home_pos, treats_status, treats_pos, self.trap_pos
+        treats_pos_set = frozenset(treats_pos_set)
+
+        return self.agent_pos, self.home_pos, treats_pos_set, self.trap_pos

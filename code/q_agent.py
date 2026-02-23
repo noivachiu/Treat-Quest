@@ -37,7 +37,7 @@ class QLearningAgent:
         
         self.rng = random.Random(seed)
 
-        # Q is a dict: keys are states, values are also a dict,  keys are actions, values are float
+        # Q is a dict: keys are states, values are also a dict, keys are actions, values are float
         self.Q = defaultdict(dict)
 
     def _q_get(self, state, action):

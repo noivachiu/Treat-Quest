@@ -38,6 +38,7 @@ class GridWorld():
 
         self.num_treats = 5
         self.treat_list = ["treat" + str(i) for i in range(self.num_treats)]
+        # self.treat_list = [i for i in range(self.num_treats)]
         self.treat_dict_status = dict.fromkeys(self.treat_list, 0)             
                                                             
         self.treat_rand_pos = [(5, 5), (5, 3), (1, 4), (2, 2), (4, 5)]      # list of possible random positions of treats (hard-coded)
@@ -191,4 +192,4 @@ class GridWorld():
         treats_pos = tuple(treats_pos)                                                      # convert list to tuple
 
         # (mouse_pos (r,c), house_pos(r,c), cheese_states (_,_,_,_,_), cheeses_pos ((r0, c0), (r1, c1), (r2, c2), (r3, c3), (r4, c4)), trap_pos)
-        return (self.agent_pos, self.home_pos, treats_status, treats_pos, self.trap_pos)
+        return self.agent_pos, self.home_pos, treats_status, treats_pos, self.trap_pos

@@ -5,7 +5,7 @@ from env import ACTIONS
 
 class QLearningAgent:
 
-    def __init__(self, alpha=0.1, gamma=0.95, epsilon=0.2, seed=None):
+    def __init__(self, alpha, gamma, epsilon, seed=None):
 
         # parameters for training agent    
         """
@@ -33,7 +33,7 @@ class QLearningAgent:
         self.epsilon = epsilon
 
         self.epsilon_decay = 0.9995        # multiplies with epsilon to decrease it over traning loop 
-        self.min_epsilon = 0.01            # sets min epsilon value to leave room for exploration even if value is small at end of training loop
+        self.min_epsilon = 0.05            # sets min epsilon value to leave room for exploration even if value is small at end of training loop
         
         self.rng = random.Random(seed)
 
@@ -87,10 +87,8 @@ class QLearningAgent:
     def learn(self, state, action, reward, next_state, done):
 
         """
-        Q-learning update:
-        
-        (1 - alpha) * old_value → keeps part of old info/Q-value
-        alpha * (reward + gamma * next_max) → adds part of new info (rewards + discount factor * expected future rewards)
+        Q-learning algorithm formula to update Q-value:
+        Q(s,a) = Q(s,a) + alpha(reward + ganna * next_max - Q(s,a))
         
         if done, the future term is 0.
         """
@@ -105,7 +103,7 @@ class QLearningAgent:
             next_best = max(self._q_get(next_state, a) for a in ACTIONS)
             target = reward + self.gamma * next_best
 
-        new_q = (1 - self.alpha) * old_q + self.alpha * target
+        new_q = old_q + self.alpha * (target - old_q)
 
         self.Q[state][action] = new_q
 

@@ -4,6 +4,14 @@ import time
 from env import GridWorld
 from q_agent import QLearningAgent
 
+ALPHA = 0.2
+GAMMA = 0.95
+EPSILON_START = 1.0
+
+NUM_EP_TRAIN = 15000   # number of episodes to run training loop
+NUM_EP_RENDER = 10     # number of episodes to render results of traning
+MAX_STEPS = 100        # max step count
+
 # clears the console screen each time its called 
 def clear():
     # this makes the console cleaner
@@ -140,21 +148,21 @@ def main():
     env = GridWorld(rows=w, cols=w, size=size, seed=42)
     
     # creates agent, the seed value here make random repeatable ACTIONS
-    agent = QLearningAgent(0.85, 0.95, 1, seed=1)
+    agent = QLearningAgent(ALPHA, GAMMA, EPSILON_START, seed=1)
 
-    num_ep_train = 15000   # number of episodes to run training loop
-    num_ep_render = 10     # number of episodes to render results of traning
-    max_steps = 100        # max step count
+    # num_ep_train = 15000   # number of episodes to run training loop
+    # num_ep_render = 10     # number of episodes to render results of traning
+    # max_steps = 100        # max step count
     
     delay_s = 0.3          # delay for each step sp we can see it move
 
     episode_return = 0     # total points this round/episode
 
     # training loop (epsilon-greedy policy - exploratation with exploration)
-    training_loop(env, agent, max_steps, num_ep_train,  episode_return)
+    training_loop(env, agent, MAX_STEPS, NUM_EP_TRAIN,  episode_return)
 
     # rendering loop (pure greedy run - only exploitation)
-    rendering_loop(env, agent, max_steps, num_ep_render,  episode_return, delay_s)
+    rendering_loop(env, agent, MAX_STEPS, NUM_EP_RENDER,  episode_return, delay_s)
 
 if __name__ == "__main__":
     main()
